@@ -56,6 +56,7 @@ const upload = multer({ storage });
 // 路由
 app.get('/api/rules', reviewController.getRules);
 app.post('/api/check', upload.single('ipaFile'), reviewController.checkApp);
+app.post('/api/analyze-ipa', upload.single('ipaFile'), reviewController.analyzeIPA);
 
 // 在生产环境中提供静态文件
 if (process.env.NODE_ENV === 'production') {

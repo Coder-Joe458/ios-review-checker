@@ -63,6 +63,12 @@ const translations = {
     recommendations: 'Recommendations',
     recommendation: 'Recommendation {index}',
     
+    // IPA文件信息
+    ipaFileInfo: 'IPA File Information',
+    bundleId: 'Bundle ID',
+    version: 'Version',
+    minOSVersion: 'Minimum iOS Version',
+    
     // 问题严重程度
     highSeverity: 'Serious Issue',
     mediumSeverity: 'Medium Issue',
@@ -150,6 +156,12 @@ const translations = {
     issuesFound: '发现的问题',
     recommendations: '建议',
     recommendation: '建议 {index}',
+    
+    // IPA文件信息
+    ipaFileInfo: 'IPA文件信息',
+    bundleId: '应用包ID',
+    version: '版本号',
+    minOSVersion: '最低iOS版本要求',
     
     // 问题严重程度
     highSeverity: '严重问题',

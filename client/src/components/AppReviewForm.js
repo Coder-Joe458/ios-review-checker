@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Upload, Checkbox, Card, Row, Col, Alert, Spin, Steps, Collapse, Tag, List, Typography, Progress, Divider } from 'antd';
-import { UploadOutlined, CheckCircleOutlined, CloseCircleOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Upload, Checkbox, Card, Row, Col, Alert, Spin, Steps, Collapse, Tag, List, Typography, Progress, Divider, Descriptions, Table } from 'antd';
+import { UploadOutlined, CheckCircleOutlined, CloseCircleOutlined, WarningOutlined, InfoCircleOutlined, AppleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import { API_BASE_URL, USE_MOCK_API } from '../config';
@@ -24,25 +24,26 @@ const AppReviewForm = () => {
     setError(null);
     
     try {
-      // 在实际项目中，此处应上传IPA文件并从中读取信息
-      // 此处我们模拟这个过程，直接发送表单信息
+      console.log('Form values:', values);
       
       const formData = new FormData();
-      if (values.ipaFile && values.ipaFile.fileList && values.ipaFile.fileList.length > 0) {
-        console.log('IPA File found in form values:', values.ipaFile.fileList[0]);
-        console.log('File name:', values.ipaFile.fileList[0].name);
-        console.log('File size:', values.ipaFile.fileList[0].size);
-        console.log('File type:', values.ipaFile.fileList[0].type);
-        formData.append('ipaFile', values.ipaFile.fileList[0].originFileObj);
+      // 处理文件上传
+      if (values.ipaFile && values.ipaFile.length > 0 && values.ipaFile[0].originFileObj) {
+        const file = values.ipaFile[0].originFileObj;
+        console.log('IPA File found in form values:', file);
+        console.log('File name:', file.name);
+        console.log('File size:', file.size);
+        console.log('File type:', file.type);
+        formData.append('ipaFile', file);
         console.log('IPA File appended to FormData');
       } else {
         console.log('No IPA file provided in the form submission');
       }
       
       // 添加表单中的其他信息
-      formData.append('name', values.appName);
-      formData.append('privacyPolicy', values.hasPrivacyPolicy);
-      formData.append('usesHttps', values.usesHttps);
+      formData.append('name', values.appName || '');
+      formData.append('hasPrivacyPolicy', values.hasPrivacyPolicy || false);
+      formData.append('usesHttps', values.usesHttps || false);
       
       // 添加权限信息
       const permissions = [];
@@ -122,14 +123,36 @@ const AppReviewForm = () => {
   const renderReviewResult = () => {
     if (!reviewResult) return null;
     
-    const { appName, issues, recommendations, passedRules, totalRules } = reviewResult;
+    const { appName, issues, recommendations, passedRules, totalRules, bundleId, version, ipaInfo } = reviewResult;
     const passRate = Math.round((passedRules / totalRules) * 100);
     
     return (
       <Card className="result-card">
         <Title level={4}>{t('resultTitle')}: {appName}</Title>
         
-        <Row gutter={16} style={{ marginBottom: 24 }}>
+        {ipaInfo && (
+          <>
+            <Divider orientation="left">
+              <AppleOutlined /> {t('ipaFileInfo') || 'IPA File Information'}
+            </Divider>
+            <Descriptions bordered size="small" column={{ xxl: 4, xl: 3, lg: 3, md: 2, sm: 1, xs: 1 }}>
+              <Descriptions.Item label={t('appName') || 'App Name'}>
+                {ipaInfo.name || appName}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('bundleId') || 'Bundle ID'}>
+                {ipaInfo.bundleId || bundleId}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('version') || 'Version'}>
+                {ipaInfo.version || version}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('minOSVersion') || 'Minimum OS Version'}>
+                {ipaInfo.minimumOSVersion || '-'}
+              </Descriptions.Item>
+            </Descriptions>
+          </>
+        )}
+        
+        <Row gutter={16} style={{ marginTop: 24, marginBottom: 24 }}>
           <Col span={24}>
             <Progress 
               percent={passRate} 
@@ -239,22 +262,48 @@ const AppReviewForm = () => {
             name="ipaFile"
             label={t('uploadIPA')}
             className="upload-container"
+            valuePropName="fileList"
+            getValueFromEvent={e => {
+              console.log('Upload getValueFromEvent:', e?.fileList);
+              if (Array.isArray(e)) {
+                return e;
+              }
+              return e && e.fileList;
+            }}
           >
             <div className="upload-area">
               <Upload.Dragger 
                 name="ipaFile" 
                 multiple={false} 
+                accept=".ipa"
+                listType="picture"
                 beforeUpload={(file) => {
                   console.log('File selected for upload:', file.name);
                   console.log('File type:', file.type);
                   console.log('File size:', file.size);
-                  return false;
+                  return false; // 阻止自动上传
                 }}
                 onChange={(info) => {
                   console.log('Upload onChange event triggered');
                   console.log('File list length:', info.fileList.length);
-                  if (info.fileList.length > 0) {
-                    console.log('File status:', info.fileList[0].status);
+                  
+                  // 更新文件状态以显示在UI上
+                  const fileList = [...info.fileList];
+                  fileList.forEach(file => {
+                    if (file.status === undefined) {
+                      file.status = 'done';
+                    }
+                  });
+                  
+                  // 只保留最后一个文件
+                  const latestFileList = fileList.slice(-1);
+                  form.setFieldsValue({ ipaFile: latestFileList });
+                  
+                  if (latestFileList.length > 0) {
+                    console.log('File status:', latestFileList[0].status);
+                    if (latestFileList[0].originFileObj) {
+                      console.log('originFileObj exists');
+                    }
                   }
                 }}
                 style={{ background: 'transparent', border: 'none' }}
