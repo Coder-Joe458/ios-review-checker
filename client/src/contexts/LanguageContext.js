@@ -4,12 +4,30 @@ import translations from '../translations';
 // 创建语言上下文
 const LanguageContext = createContext();
 
+// 检测浏览器语言
+const detectBrowserLanguage = () => {
+  // 获取浏览器语言
+  const browserLang = navigator.language || navigator.userLanguage;
+  
+  // 检查浏览器语言是否为中文
+  const isChinese = /^zh\b/.test(browserLang);
+  
+  // 如果是中文返回'zh'，否则返回'en'
+  return isChinese ? 'zh' : 'en';
+};
+
 // 语言提供者组件
 export const LanguageProvider = ({ children }) => {
-  // 获取保存的语言或默认为中文
+  // 获取保存的语言或检测浏览器语言
   const [language, setLanguage] = useState(() => {
+    // 首先检查本地存储中是否有保存的语言偏好
     const savedLanguage = localStorage.getItem('language');
-    return savedLanguage || 'zh';
+    if (savedLanguage) {
+      return savedLanguage;
+    }
+    
+    // 如果没有保存的偏好，则检测浏览器语言
+    return detectBrowserLanguage();
   });
 
   // 当前使用的翻译
