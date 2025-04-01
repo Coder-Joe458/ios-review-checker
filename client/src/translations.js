@@ -98,7 +98,7 @@ const translations = {
     appName: '应用名称',
     appNamePlaceholder: '输入应用名称',
     appNameRequired: '请输入应用名称',
-    uploadIPA: '上传IPA文件（可选）',
+    uploadIPA: 'IPA文件（可选）',
     uploadDragText: '点击或拖拽IPA文件到此区域上传',
     uploadHint: '支持单个文件上传。实际分析将从IPA文件中提取信息。',
     privacySecurity: '隐私与安全',

@@ -58,19 +58,36 @@
   border-radius: 6px;
 }
 
+.upload-container {
+  margin-bottom: 24px;
+}
+
 .upload-area {
-  border: 2px dashed #d9d9d9;
-  border-radius: 8px;
-  padding: 30px;
+  border: 2px dashed #d9d9d9 !important;
+  border-radius: 8px !important;
+  padding: 40px !important;
   text-align: center;
   background: #fafafa;
   transition: all 0.3s;
-  margin-bottom: 20px;
+  margin-bottom: 0;
+  position: relative;
+  overflow: visible;
+  cursor: pointer;
 }
 
-.upload-area:hover {
-  border-color: #1890ff;
+.upload-area:hover, .upload-area:focus, .upload-area:active {
+  border-color: #1890ff !important;
   background: #f0f8ff;
+}
+
+.ant-upload-wrapper .ant-upload-drag {
+  border: none !important;
+  background: transparent !important;
+}
+
+.ant-upload.ant-upload-drag {
+  border: none !important;
+  background: transparent !important;
 }
 
 .upload-area .ant-upload-drag-icon {
@@ -168,8 +185,11 @@
   }
 }
 
-.ant-form-item-label {
+.ant-form-item-label > label {
   white-space: normal !important;
   overflow: visible !important;
   text-overflow: clip !important;
+  height: auto !important;
+  line-height: 1.5 !important;
+  padding-bottom: 4px !important;
 }

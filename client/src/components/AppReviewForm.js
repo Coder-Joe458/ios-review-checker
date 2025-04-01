@@ -194,16 +194,22 @@ const AppReviewForm = () => {
           <Form.Item
             name="ipaFile"
             label={t('uploadIPA')}
-            style={{ marginBottom: 24 }}
-            labelCol={{ span: 24 }}
+            className="upload-container"
           >
-            <Upload.Dragger name="ipaFile" multiple={false} beforeUpload={() => false} className="upload-area">
-              <p className="ant-upload-drag-icon">
-                <UploadOutlined style={{ fontSize: 40, color: '#1890ff' }} />
-              </p>
-              <p className="ant-upload-text">{t('uploadDragText')}</p>
-              <p className="ant-upload-hint">{t('uploadHint')}</p>
-            </Upload.Dragger>
+            <div className="upload-area">
+              <Upload.Dragger 
+                name="ipaFile" 
+                multiple={false} 
+                beforeUpload={() => false}
+                style={{ background: 'transparent', border: 'none' }}
+              >
+                <p className="ant-upload-drag-icon">
+                  <UploadOutlined style={{ fontSize: 40, color: '#1890ff' }} />
+                </p>
+                <p className="ant-upload-text">{t('uploadDragText')}</p>
+                <p className="ant-upload-hint">{t('uploadHint')}</p>
+              </Upload.Dragger>
+            </div>
           </Form.Item>
         </div>
         
