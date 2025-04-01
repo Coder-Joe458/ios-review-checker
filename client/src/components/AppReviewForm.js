@@ -167,7 +167,7 @@ const AppReviewForm = () => {
   };
 
   const renderFormFields = () => (
-    <Card>
+    <Card className="form-container">
       <Form
         form={form}
         layout="vertical"
@@ -181,121 +181,127 @@ const AppReviewForm = () => {
           usesMicrophone: false,
         }}
       >
-        <Title level={4}>{t('basicInfo')}</Title>
-        <Form.Item
-          name="appName"
-          label={t('appName')}
-          rules={[{ required: true, message: t('appNameRequired') }]}
-        >
-          <Input placeholder={t('appNamePlaceholder')} />
-        </Form.Item>
+        <div className="form-section">
+          <Title level={4} className="form-title">{t('basicInfo')}</Title>
+          <Form.Item
+            name="appName"
+            label={t('appName')}
+            rules={[{ required: true, message: t('appNameRequired') }]}
+          >
+            <Input placeholder={t('appNamePlaceholder')} size="large" />
+          </Form.Item>
+          
+          <Form.Item
+            name="ipaFile"
+            label={t('uploadIPA')}
+          >
+            <Upload.Dragger name="ipaFile" multiple={false} beforeUpload={() => false} className="upload-area">
+              <p className="ant-upload-drag-icon">
+                <UploadOutlined />
+              </p>
+              <p className="ant-upload-text">{t('uploadDragText')}</p>
+              <p className="ant-upload-hint">{t('uploadHint')}</p>
+            </Upload.Dragger>
+          </Form.Item>
+        </div>
         
-        <Form.Item
-          name="ipaFile"
-          label={t('uploadIPA')}
-        >
-          <Upload.Dragger name="ipaFile" multiple={false} beforeUpload={() => false} className="upload-area">
-            <p className="ant-upload-drag-icon">
-              <UploadOutlined />
-            </p>
-            <p className="ant-upload-text">{t('uploadDragText')}</p>
-            <p className="ant-upload-hint">{t('uploadHint')}</p>
-          </Upload.Dragger>
-        </Form.Item>
+        <div className="form-section">
+          <Title level={4} className="form-title">{t('privacySecurity')}</Title>
+          <Form.Item name="hasPrivacyPolicy" valuePropName="checked" className="checkbox-item">
+            <Checkbox>{t('hasPrivacyPolicy')}</Checkbox>
+          </Form.Item>
+          
+          <Form.Item name="usesHttps" valuePropName="checked" className="checkbox-item">
+            <Checkbox>{t('usesHttps')}</Checkbox>
+          </Form.Item>
+        </div>
         
-        <Title level={4} style={{ marginTop: 24 }}>{t('privacySecurity')}</Title>
-        <Form.Item name="hasPrivacyPolicy" valuePropName="checked">
-          <Checkbox>{t('hasPrivacyPolicy')}</Checkbox>
-        </Form.Item>
+        <div className="form-section">
+          <Title level={4} className="form-title">{t('permissions')}</Title>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item name="usesCamera" valuePropName="checked" className="checkbox-item">
+                <Checkbox>{t('usesCamera')}</Checkbox>
+              </Form.Item>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                name="cameraDescription"
+                label={t('cameraDescription')}
+                dependencies={['usesCamera']}
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!getFieldValue('usesCamera') || value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error(t('cameraMissing')));
+                    },
+                  }),
+                ]}
+              >
+                <Input placeholder={t('cameraPlaceholder')} />
+              </Form.Item>
+            </Col>
+          </Row>
+          
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item name="usesLocation" valuePropName="checked" className="checkbox-item">
+                <Checkbox>{t('usesLocation')}</Checkbox>
+              </Form.Item>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                name="locationDescription"
+                label={t('locationDescription')}
+                dependencies={['usesLocation']}
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!getFieldValue('usesLocation') || value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error(t('locationMissing')));
+                    },
+                  }),
+                ]}
+              >
+                <Input placeholder={t('locationPlaceholder')} />
+              </Form.Item>
+            </Col>
+          </Row>
+          
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item name="usesMicrophone" valuePropName="checked" className="checkbox-item">
+                <Checkbox>{t('usesMicrophone')}</Checkbox>
+              </Form.Item>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                name="microphoneDescription"
+                label={t('microphoneDescription')}
+                dependencies={['usesMicrophone']}
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!getFieldValue('usesMicrophone') || value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error(t('microphoneMissing')));
+                    },
+                  }),
+                ]}
+              >
+                <Input placeholder={t('microphonePlaceholder')} />
+              </Form.Item>
+            </Col>
+          </Row>
+        </div>
         
-        <Form.Item name="usesHttps" valuePropName="checked">
-          <Checkbox>{t('usesHttps')}</Checkbox>
-        </Form.Item>
-        
-        <Title level={4} style={{ marginTop: 24 }}>{t('permissions')}</Title>
-        <Row gutter={16}>
-          <Col span={8}>
-            <Form.Item name="usesCamera" valuePropName="checked">
-              <Checkbox>{t('usesCamera')}</Checkbox>
-            </Form.Item>
-          </Col>
-          <Col span={16}>
-            <Form.Item
-              name="cameraDescription"
-              label={t('cameraDescription')}
-              dependencies={['usesCamera']}
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!getFieldValue('usesCamera') || value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error(t('cameraMissing')));
-                  },
-                }),
-              ]}
-            >
-              <Input placeholder={t('cameraPlaceholder')} />
-            </Form.Item>
-          </Col>
-        </Row>
-        
-        <Row gutter={16}>
-          <Col span={8}>
-            <Form.Item name="usesLocation" valuePropName="checked">
-              <Checkbox>{t('usesLocation')}</Checkbox>
-            </Form.Item>
-          </Col>
-          <Col span={16}>
-            <Form.Item
-              name="locationDescription"
-              label={t('locationDescription')}
-              dependencies={['usesLocation']}
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!getFieldValue('usesLocation') || value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error(t('locationMissing')));
-                  },
-                }),
-              ]}
-            >
-              <Input placeholder={t('locationPlaceholder')} />
-            </Form.Item>
-          </Col>
-        </Row>
-        
-        <Row gutter={16}>
-          <Col span={8}>
-            <Form.Item name="usesMicrophone" valuePropName="checked">
-              <Checkbox>{t('usesMicrophone')}</Checkbox>
-            </Form.Item>
-          </Col>
-          <Col span={16}>
-            <Form.Item
-              name="microphoneDescription"
-              label={t('microphoneDescription')}
-              dependencies={['usesMicrophone']}
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!getFieldValue('usesMicrophone') || value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error(t('microphoneMissing')));
-                  },
-                }),
-              ]}
-            >
-              <Input placeholder={t('microphonePlaceholder')} />
-            </Form.Item>
-          </Col>
-        </Row>
-        
-        <Form.Item style={{ marginTop: 24 }}>
-          <Button type="primary" htmlType="submit" loading={loading} size="large" block>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading} size="large" className="submit-button">
             {t('submitButton')}
           </Button>
         </Form.Item>
