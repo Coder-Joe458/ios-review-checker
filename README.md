@@ -121,5 +121,4 @@ ios-review-checker/
 5. Open a Pull Request
 
 ## License
-
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the Proprietary License - see the LICENSE file for details. All rights reserved. Unauthorized copying, use, or distribution is prohibited. 
