@@ -167,3 +167,9 @@
     padding: 0 20px;
   }
 }
+
+.ant-form-item-label {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
