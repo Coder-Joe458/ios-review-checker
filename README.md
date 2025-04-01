@@ -1,84 +1,125 @@
-# iOS应用预审核系统
+# iOS App Pre-Review System
 
-这是一个帮助iOS应用开发者进行App Store审核前预检查的Web应用。开发者可以在提交应用到Apple审核之前，使用本系统快速检查应用是否符合App Store的审核规则，发现潜在问题并获取修复建议。
+A web-based tool to check iOS apps for potential App Store review issues before submission.
 
-## 功能特点
+## Features
 
-- 快速审核：在一分钟内完成iOS应用的预审核
-- 详细报告：提供详细的问题列表和修复建议
-- 规则库：包含最新的App Store审核规则和最佳实践
-- 用户友好：简单直观的界面，易于使用
+- Upload and analyze IPA files
+- Complete pre-review checklist
+- Receive detailed feedback on potential issues
+- Get recommendations for fixing problems
+- Supports English and Chinese languages
 
-## 技术栈
+## Getting Started
 
-- 前端：React, Ant Design
-- 后端：Node.js, Express
-- 部署：支持Heroku等平台的一键部署
+### Prerequisites
 
-## 快速开始
+- Node.js 14.x or higher
+- npm 6.x or higher
 
-### 安装依赖
+### Installation
 
-```bash
-# 安装所有依赖（前端和后端）
-npm install
-npm run install-client
-```
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/ios-review-checker.git
+   cd ios-review-checker
+   ```
 
-### 启动开发服务器
+2. Install dependencies
+   ```bash
+   # Install client dependencies
+   cd client
+   npm install
+   
+   # Install server dependencies (if applicable)
+   cd ../server
+   npm install
+   ```
 
-```bash
-# 同时启动前端和后端
-npm run dev
+3. Configure environment variables
+   ```bash
+   # In client directory, create .env file
+   REACT_APP_API_URL=http://localhost:3001
+   REACT_APP_USE_MOCK_API=true  # Set to true for testing without a backend server
+   ```
 
-# 只启动后端
-npm run server
+4. Start the development server
+   ```bash
+   # Start client
+   cd client
+   npm start
+   
+   # Start server (in another terminal, if applicable)
+   cd server
+   npm start
+   ```
 
-# 只启动前端
-npm run client
-```
+## Testing the Application
 
-### 构建生产版本
+### Using the Mock API
 
-```bash
-npm run build
-```
+For testing purposes, you can enable the mock API which simulates server responses:
 
-### 部署
+1. Set the environment variable `REACT_APP_USE_MOCK_API=true`
+2. Run the client application
+3. Fill out the form and test the submission
 
-该应用可以轻松部署到Heroku或其他支持Node.js的平台。
+The mock API will:
+- Simulate API responses with realistic data
+- Occasionally generate random errors to test error handling (20% chance)
+- Customize the response based on form inputs
+- Add a 2-second delay to simulate network latency
 
-```bash
-# Heroku部署示例
-heroku create
-git push heroku master
-```
+### Manual Testing
 
-## 项目结构
+A set of test cases is available in `client/src/tests/AppReviewFormTest.js` to guide manual testing. These test cases cover:
+
+1. Basic form submission without an IPA file
+2. Form submission with an IPA file
+3. Form validation
+4. Language switching
+5. Review results display
+6. Error handling
+7. Mobile responsiveness
+
+Follow the steps in each test case to verify application functionality.
+
+### Testing with Real Data
+
+To test with a real backend server:
+
+1. Set `REACT_APP_USE_MOCK_API=false`
+2. Configure `REACT_APP_API_URL` to point to your backend server
+3. Start the backend server
+4. Submit the form with real IPA files
+
+## Project Structure
 
 ```
 ios-review-checker/
-├── client/               # 前端React应用
-│   ├── public/           # 静态文件
-│   └── src/              # React源代码
-│       ├── components/   # React组件
-│       └── ...
-├── server/               # 后端代码
-│   └── index.js          # Express服务器
-└── ...
+├── client/                 # Frontend React application
+│   ├── public/             # Static files
+│   ├── src/                # Source code
+│   │   ├── components/     # React components
+│   │   ├── contexts/       # Context providers
+│   │   ├── mocks/          # Mock server for testing
+│   │   ├── tests/          # Test cases
+│   │   ├── App.js          # Main App component
+│   │   ├── config.js       # Application configuration
+│   │   ├── translations.js # i18n translations
+│   │   └── index.js        # Entry point
+├── server/                 # Backend server (if applicable)
+└── README.md               # This file
 ```
 
-## 待开发功能
+## Contributing
 
-- [ ] IPA文件解析：直接从IPA文件提取应用信息
-- [ ] Info.plist检查：自动检查Info.plist配置问题
-- [ ] 屏幕截图分析：检查UI是否符合Apple设计指南
-- [ ] 自定义检查规则：允许用户添加自定义规则
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 贡献
+## License
 
-欢迎提交Pull Request或Issue来改进这个项目。
-
-## 许可证
-
-[MIT](LICENSE) 
+This project is licensed under the MIT License - see the LICENSE file for details. 

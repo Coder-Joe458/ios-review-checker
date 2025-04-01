@@ -3,7 +3,8 @@ import { Form, Input, Button, Upload, Checkbox, Card, Row, Col, Alert, Spin, Ste
 import { UploadOutlined, CheckCircleOutlined, CloseCircleOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, USE_MOCK_API } from '../config';
+import mockReviewApi from '../mocks/serverMock';
 
 const { Panel } = Collapse;
 const { Step } = Steps;
@@ -15,10 +16,12 @@ const AppReviewForm = () => {
   const [loading, setLoading] = useState(false);
   const [reviewResult, setReviewResult] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const [error, setError] = useState(null);
 
   const onFinish = async (values) => {
     setLoading(true);
     setCurrentStep(1);
+    setError(null);
     
     try {
       // 在实际项目中，此处应上传IPA文件并从中读取信息
@@ -26,7 +29,14 @@ const AppReviewForm = () => {
       
       const formData = new FormData();
       if (values.ipaFile && values.ipaFile.fileList && values.ipaFile.fileList.length > 0) {
+        console.log('IPA File found in form values:', values.ipaFile.fileList[0]);
+        console.log('File name:', values.ipaFile.fileList[0].name);
+        console.log('File size:', values.ipaFile.fileList[0].size);
+        console.log('File type:', values.ipaFile.fileList[0].type);
         formData.append('ipaFile', values.ipaFile.fileList[0].originFileObj);
+        console.log('IPA File appended to FormData');
+      } else {
+        console.log('No IPA file provided in the form submission');
       }
       
       // 添加表单中的其他信息
@@ -41,20 +51,43 @@ const AppReviewForm = () => {
       if (values.usesMicrophone) permissions.push({ name: 'microphone', description: values.microphoneDescription });
       
       formData.append('permissions', JSON.stringify(permissions));
-      
-      console.log('发送请求到:', `${API_BASE_URL}/api/check?lang=${language}`);
-      const response = await axios.post(`${API_BASE_URL}/api/check?lang=${language}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      console.log('Form data prepared:', {
+        appName: values.appName,
+        hasPrivacyPolicy: values.hasPrivacyPolicy,
+        usesHttps: values.usesHttps,
+        permissions: permissions
       });
       
-      console.log('收到审核结果响应:', response.data);
+      let response;
+      if (USE_MOCK_API) {
+        console.log('Using mock API for review');
+        // Use mock API for testing
+        const mockResult = await mockReviewApi(formData, language);
+        response = { data: mockResult };
+        console.log('Received mock review response:', response.data);
+      } else {
+        // Use real API
+        console.log('发送请求到:', `${API_BASE_URL}/api/check?lang=${language}`);
+        response = await axios.post(`${API_BASE_URL}/api/check?lang=${language}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        console.log('收到审核结果响应:', response.data);
+      }
+      
       setReviewResult(response.data);
       setCurrentStep(2);
     } catch (error) {
       console.error('应用审核过程中出错:', error);
       console.error('错误详情:', error.response ? error.response.data : '无响应数据');
       console.error('错误状态:', error.response ? error.response.status : '无状态码');
-      // 在UI中显示错误
+      
+      // Set error state to display to the user
+      const errorMessage = error.response && error.response.data && error.response.data.message
+        ? error.response.data.message
+        : t('genericErrorMessage') || 'An error occurred during the review process. Please try again.';
+      
+      setError(errorMessage);
+      setCurrentStep(0); // Go back to form step
     } finally {
       setLoading(false);
     }
@@ -168,6 +201,17 @@ const AppReviewForm = () => {
 
   const renderFormFields = () => (
     <Card className="form-container">
+      {error && (
+        <Alert
+          message={t('errorTitle') || "Error"}
+          description={error}
+          type="error"
+          showIcon
+          closable
+          onClose={() => setError(null)}
+          style={{ marginBottom: 24 }}
+        />
+      )}
       <Form
         form={form}
         layout="vertical"
@@ -200,7 +244,19 @@ const AppReviewForm = () => {
               <Upload.Dragger 
                 name="ipaFile" 
                 multiple={false} 
-                beforeUpload={() => false}
+                beforeUpload={(file) => {
+                  console.log('File selected for upload:', file.name);
+                  console.log('File type:', file.type);
+                  console.log('File size:', file.size);
+                  return false;
+                }}
+                onChange={(info) => {
+                  console.log('Upload onChange event triggered');
+                  console.log('File list length:', info.fileList.length);
+                  if (info.fileList.length > 0) {
+                    console.log('File status:', info.fileList[0].status);
+                  }
+                }}
                 style={{ background: 'transparent', border: 'none' }}
               >
                 <p className="ant-upload-drag-icon">

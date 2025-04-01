@@ -79,6 +79,11 @@ const translations = {
     
     // 错误信息
     errorLoadingRules: 'Unable to load review guidelines, please try again later',
+    errorTitle: 'Error',
+    genericErrorMessage: 'An error occurred during the review process. Please try again.',
+    connectionError: 'Could not connect to the server. Please check your connection and try again.',
+    fileUploadError: 'There was a problem uploading your IPA file. Please try a different file or contact support.',
+    serverError: 'Server error occurred. Our team has been notified. Please try again later.',
     
     // 语言切换
     languageSwitch: 'Switch to 中文',
@@ -162,6 +167,11 @@ const translations = {
     
     // 错误信息
     errorLoadingRules: '无法获取审核规则，请稍后再试',
+    errorTitle: '错误',
+    genericErrorMessage: '审核过程中发生错误，请重试。',
+    connectionError: '无法连接到服务器，请检查您的网络连接并重试。',
+    fileUploadError: '上传IPA文件时出现问题，请尝试使用其他文件或联系支持人员。',
+    serverError: '服务器错误，我们的团队已经收到通知，请稍后再试。',
     
     // 语言切换
     languageSwitch: 'Switch to English',
